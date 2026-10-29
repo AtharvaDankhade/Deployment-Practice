@@ -6,6 +6,10 @@ requires-python = ">=3.11"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+# Make `import app` work regardless of how pytest is invoked.
+# `python -m pytest` adds the cwd to sys.path; the bare `pytest` script does not,
+# which is exactly how CI ran it.
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100
