@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculator</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      font-family: ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 10%, #1e3a5f, #0b1220 60%);
+      color: #e6edf7;
+    }
+    .card {
+      width: min(380px, 92vw); padding: 28px; border-radius: 18px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 20px 50px rgba(0,0,0,.45);
+    }
+    h1 { margin: 0 0 4px; font-size: 20px; font-weight: 600; }
+    p.sub { margin: 0 0 20px; font-size: 13px; color: #93a4bd; }
+    label { display: block; font-size: 12px; color: #93a4bd; margin-bottom: 6px; }
+    input, select {
+      width: 100%; padding: 11px 12px; margin-bottom: 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.35);
+      color: inherit; font-size: 15px; outline: none;
+    }
+    input:focus, select:focus { border-color: #4c9aff; }
+    button {
+      width: 100%; padding: 12px; border: 0; border-radius: 10px; cursor: pointer;
+      background: linear-gradient(180deg, #4c9aff, #2f7ae5); color: #fff;
+      font-size: 15px; font-weight: 600;
+    }
+    button:disabled { opacity: .6; cursor: progress; }
+    .result {
+      margin-top: 18px; padding: 16px; border-radius: 12px; text-align: center;
+      background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.1);
+      font-size: 22px; font-variant-numeric: tabular-nums; min-height: 58px;
+      display: grid; place-items: center;
+    }
+    .result.error { color: #ff8a8a; font-size: 15px; }
+    .result.idle { color: #6b7d97; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Calculator</h1>
+    <p class="sub">FastAPI + Docker + Prometheus demo</p>
+
+    <label for="operation">Operation</label>
+    <select id="operation">
+      <option value="add">Add (+)</option>
+      <option value="subtract">Subtract (-)</option>
+      <option value="multiply">Multiply (x)</option>
+      <option value="divide">Divide (/)</option>
+    </select>
+
+    <label for="a">First number</label>
+    <input id="a" type="number" step="any" value="6" />
+
+    <label for="b">Second number</label>
+    <input id="b" type="number" step="any" value="7" />
+
+    <button id="go">Calculate</button>
+    <div id="out" class="result idle">Result appears here</div>
+  </main>
+
+  <script>
+    const out = document.getElementById("out");
+    const btn = document.getElementById("go");
+    const symbol = { add: "+", subtract: "-", multiply: "x", divide: "/" };
+
+    async function calculate() {
+      const operation = document.getElementById("operation").value;
+      const a = Number(document.getElementById("a").value);
+      const b = Number(document.getElementById("b").value);
+
+      if (!Number.isFinite(a) || !Number.isFinite(b)) {
+        out.className = "result error";
+        out.textContent = "Please enter two valid numbers.";
+        return;
+      }
+
+      btn.disabled = true;
+      out.className = "result idle";
+      out.textContent = "Calculating...";
+
+      try {
+        const res = await fetch("/api/calculate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ operation, a, b }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          out.className = "result error";
+          out.textContent = data.detail ?? "Request failed";
+          return;
+        }
+        out.className = "result";
+        out.textContent = `${data.a} ${symbol[data.operation]} ${data.b} = ${data.result}`;
+      } catch (err) {
+        out.className = "result error";
+        out.textContent = "Network error: " + err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", calculate);
+    document.querySelectorAll("input").forEach((el) =>
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter") calculate(); })
+    );
+  </script>
+</body>
+</html>

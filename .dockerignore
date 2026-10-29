@@ -1,0 +1,30 @@
+# The build context is everything sent to the Docker daemon.
+# Smaller context = faster builds and no leaked secrets.
+
+# Local dev state - must never enter the image
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# VCS / CI
+.git/
+.gitignore
+.github/
+
+# Secrets
+.env
+.env.*
+
+# Things the image does not need (deps come from requirements.txt)
+tests/
+deploy/
+*.md
+Makefile
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose*.yml
