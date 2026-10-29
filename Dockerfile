@@ -55,7 +55,7 @@ COPY --chown=appuser:appuser static ./static
 
 USER appuser
 
-# Documentation only - EXPOSE does not publish anything. `docker run -p` does.
+# Documentation only - EXPOSE does not publish anything. `docker run -p` does
 EXPOSE 8000
 
 # Docker runs this inside the container every 30s and marks the container
