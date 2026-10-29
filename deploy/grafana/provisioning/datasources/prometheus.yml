@@ -1,0 +1,11 @@
+apiVersion: 1
+
+# The uid must match the dashboard JSON, otherwise panels show "datasource not found".
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false

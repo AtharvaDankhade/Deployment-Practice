@@ -1,0 +1,15 @@
+apiVersion: 1
+
+# Grafana watches this folder and loads every *.json as a dashboard.
+# Files in the repo = dashboards as code. No clicking, no drift.
+providers:
+  - name: calculator
+    orgId: 1
+    folder: Calculator
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false
