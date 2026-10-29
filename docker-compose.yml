@@ -7,7 +7,9 @@ services:
   app:
     build:
       context: .
-    image: calculator:1.0.0
+    # Local: `docker compose up -d --build` builds this tag.
+    # Server: `docker compose pull` fetches the exact image CI built and tested.
+    image: ${APP_IMAGE:-ghcr.io/atharvadankhade/deployment-practice:latest}
     environment:
       APP_ENV: production
       LOG_LEVEL: INFO

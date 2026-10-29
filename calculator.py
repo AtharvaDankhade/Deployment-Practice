@@ -5,7 +5,7 @@
 The HTTP API in app/main.py shares the same logic from app/calculator.py.
 """
 
-from app.calculator import OPERATIONS, SYMBOLS, CalculatorError, calculate, format_result
+from app.calculator import SYMBOLS, CalculatorError, calculate, format_result
 
 MENU_ORDER = ("add", "subtract", "multiply", "divide")
 
